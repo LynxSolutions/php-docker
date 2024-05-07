@@ -26,7 +26,11 @@ jobs:
 
       - name: Generate Strategy
         id: generate-strategy
-        run: php ./generate-matrix-strategy.php | tee -a $GITHUB_OUTPUT
+        run: |
+          EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
+          echo "strategy<<$EOF" >> $GITHUB_OUTPUT
+          php ./generate-matrix-strategy.php | tee -a $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
   build-and-push:
     name: Build and push Docker images
