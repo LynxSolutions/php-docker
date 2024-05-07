@@ -4,9 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM php:8.3.6-fpm-alpine
-
-COPY conf.d/php.overrides.ini $PHP_INI_DIR/conf.d
+FROM php:8.3.4-fpm-alpine
 
 RUN apk add --no-cache --virtual .build-deps \
       $PHPIZE_DEPS \
@@ -32,3 +30,5 @@ RUN apk add --no-cache --virtual .build-deps \
     && apk del .build-deps \
     && docker-php-source delete \
     && pecl clear-cache
+
+COPY conf.d/php.overrides.ini $PHP_INI_DIR/conf.d
