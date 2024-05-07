@@ -1,10 +1,13 @@
-name: Build and push docker images to Docker Hub
+name: Build and push images
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: 0 0 * * 0
   push:
     paths:
       - 'versions.json'
+      - '**/Dockerfile'
 
 concurrency:
   group: ${{ github.ref }}
