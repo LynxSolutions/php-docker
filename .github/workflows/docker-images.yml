@@ -26,7 +26,7 @@ jobs:
       strategy: ${{ steps.generate-strategy.outputs.strategy }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Generate Strategy
         id: generate-strategy
@@ -43,7 +43,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Build ${{ matrix.name }}
         run: ${{ matrix.runs.build }}
       - name: List Images
