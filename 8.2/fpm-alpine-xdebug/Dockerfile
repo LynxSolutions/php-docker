@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM php:8.2.17-fpm-alpine
+FROM php:8.2.18-fpm-alpine
 
 COPY conf.d/php.overrides.ini $PHP_INI_DIR/conf.d
 
