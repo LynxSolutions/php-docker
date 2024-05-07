@@ -37,7 +37,7 @@ jobs:
           echo "$EOF" >> $GITHUB_OUTPUT
 
   build-and-push:
-    name: Build and push Docker images
+    name: ${{ matrix.name }}
     needs: generate-strategy
     strategy: ${{ fromJson(needs.generate-strategy.outputs.strategy) }}
     runs-on: ${{ matrix.os }}
@@ -47,4 +47,4 @@ jobs:
       - name: Build ${{ matrix.name }}
         run: ${{ matrix.runs.build }}
       - name: List Images
-        run: docker image ls | grep "/php:"
+        run: docker image ls | grep "\/php"
