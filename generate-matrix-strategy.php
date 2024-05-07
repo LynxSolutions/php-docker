@@ -28,7 +28,7 @@ foreach ($versions as $majorVersion => $versionData) {
             'os' => 'ubuntu-latest',
             'tags' => $tags,
             'runs' => [
-                'build' => getBuildCommand($tags, $dir),
+                'build' => getBuildCommand($tags, $dir, latest: $isLatest),
                 'push' => getPushCommand($tags),
             ],
         ];
@@ -66,10 +66,19 @@ function getVersionTags(string $repository, string $version, string $variant, bo
     return $tags;
 }
 
-function getBuildCommand(array $tags, string $dir, string $platform = 'linux/amd64'): string
+function getBuildCommand(array $tags, string $dir, string $platform = 'linux/amd64', bool $latest = false): string
 {
     $tagArgs = implode(' ', array_map(fn($tag) => '--tag ' . $tag, $tags));
-    return sprintf('docker build --platform %s %s %s', $platform, $tagArgs, $dir);
+
+    $cacheTags = $tags;
+    array_shift($cacheTags);
+    if ($latest) {
+        array_pop($cacheTags);
+    }
+    $cacheFromArgs = implode(' ', array_map(fn($tag) => '--cache-from ' . $tag, $cacheTags));
+
+
+    return sprintf('docker build --platform %s %s %s %s', $platform, $cacheFromArgs, $tagArgs, $dir);
 }
 
 function getPushCommand(array $tags): string
