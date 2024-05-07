@@ -1,6 +1,6 @@
 {
     "8.2": {
-        "version": "8.2.18",
+        "version": "8.2.17",
         "variants": [
             "fpm-alpine",
             "fpm-alpine-xdebug",
@@ -11,7 +11,7 @@
         ]
     },
     "8.3": {
-        "version": "8.3.6",
+        "version": "8.3.5",
         "variants": [
             "fpm-alpine",
             "fpm-alpine-xdebug",
