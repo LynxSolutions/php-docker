@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 require(__DIR__ . '/common.php');
 
+// TODO: Remove this once it's added to the actions' environment
+putenv('DOCKER_REPOSITORY=lynxsolutions/php');
+
 if (!file_exists(VERSIONS_FILE)) {
     exit_cli(sprintf("%s file does not exist", VERSIONS_FILE));
 }
