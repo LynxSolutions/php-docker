@@ -2,10 +2,7 @@
 
 declare(strict_types=1);
 
-const STATUS_SUCCESS = 0;
-const STATUS_FAILURE = 1;
-
-const VERSIONS_FILE = 'versions.json';
+require(__DIR__ . '/common.php');
 
 const VERSIONS = [
     '8.2',
@@ -166,15 +163,4 @@ function getCommitMessage(array $bumps): string
     }
 
     return sprintf("Bump %s%s", $message, $last);
-}
-
-function exit_cli(string $message = "", int $status = STATUS_FAILURE): void
-{
-    $stream = STDOUT;
-    if ($status > STATUS_SUCCESS) {
-        $stream = STDERR;
-    }
-
-    fprintf($stream, $message);
-    exit($status);
 }
