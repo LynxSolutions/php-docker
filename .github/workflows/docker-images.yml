@@ -66,3 +66,6 @@ jobs:
 
       - name: List Images
         run: docker image ls | grep "$DOCKER_REPOSITORY"
+
+      - name: Push ${{ join(matrix.tags, ', ') }}
+        run: ${{ matrix.runs.push }}
