@@ -1,0 +1,42 @@
+name: Build and push docker images to Docker Hub
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'versions.json'
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  generate-strategy:
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      strategy: ${{ steps.generate-strategy.outputs.strategy }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Generate Strategy
+        id: generate-strategy
+        run: php ./generate-matrix-strategy.php | tee -a $GITHUB_OUTPUT
+
+  build-and-push:
+    name: Build and push Docker images
+    needs: generate-strategy
+    strategy: ${{ fromJson(needs.generate-strategy.outputs.strategy) }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Build ${{ matrix.name }}
+        run: ${{ matrix.runs.build }}
+      - name: List Images
+        run: docker image ls | grep "/php:"
