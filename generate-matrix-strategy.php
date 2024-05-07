@@ -1,18 +1,17 @@
+#!/usr/bin/env php
 <?php
 
 declare(strict_types=1);
 
 require(__DIR__ . '/common.php');
 
-// TODO: Remove this once it's added to the actions' environment
-putenv('DOCKER_REPOSITORY=lynxsolutions/php');
-
 if (!file_exists(VERSIONS_FILE)) {
     exit_cli(sprintf("%s file does not exist", VERSIONS_FILE));
 }
 $versions = json_decode(file_get_contents(VERSIONS_FILE), true);
 
-if (false === getenv('DOCKER_REPOSITORY')) {
+$repository = getenv('DOCKER_REPOSITORY');
+if (false === $repository) {
     exit_cli("DOCKER_REPOSITORY environment variable is not set\n");
 }
 
@@ -22,7 +21,7 @@ foreach ($versions as $majorVersion => $versionData) {
     $isLatest = $versionData['latest'];
 
     foreach ($versionData['variants'] as $variant) {
-        $tags = getVersionTags($version, $variant, $isLatest);
+        $tags = getVersionTags($repository, $version, $variant, $isLatest);
         $dir = sprintf('./%s/%s', $majorVersion, $variant);
         $include[] = [
             'name' => sprintf('%s-%s', $version, $variant),
@@ -37,17 +36,16 @@ foreach ($versions as $majorVersion => $versionData) {
 }
 
 $strategy = [
-    'fail-fast' => false,
+    'fail-fast' => true,
     'matrix' => [
         'include' => $include,
     ],
 ];
 
-exit_cli(json_encode($strategy, JSON_PRETTY_PRINT), STATUS_SUCCESS);
+exit_cli(sprintf("%s\n", json_encode($strategy, JSON_PRETTY_PRINT)), STATUS_SUCCESS);
 
-function getVersionTags(string $version, string $variant, bool $latest = false): array
+function getVersionTags(string $repository, string $version, string $variant, bool $latest = false): array
 {
-    $repository = getenv('DOCKER_REPOSITORY');
     $versionParts = explode('.', $version);
 
     $tags = [];
