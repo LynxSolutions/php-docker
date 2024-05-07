@@ -18,6 +18,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # If not provided, the push from the EndBug/add-and-commit action won't trigger other workflows
+          # see: https://github.com/EndBug/add-and-commit?tab=readme-ov-file#the-commit-from-the-action-is-not-triggering-ci
+          token: ${{ secrets.GH_PERSONAL_TOKEN }}
 
       - name: Run versions.php script
         id: versions
