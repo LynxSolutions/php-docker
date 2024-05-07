@@ -21,7 +21,7 @@ jobs:
 
       - name: Run versions.php script
         id: versions
-        run: php ./versions.php | tee -a $GITHUB_OUTPUT
+        run: ./versions.php | tee -a $GITHUB_OUTPUT
 
       - name: Run apply-templates.sh script
         if: steps.versions.outputs.bumped == 1
