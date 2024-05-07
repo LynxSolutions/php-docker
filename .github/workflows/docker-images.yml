@@ -5,6 +5,8 @@ on:
   schedule:
     - cron: 0 0 * * 0
   push:
+    branches:
+      - main
     paths:
       - 'versions.json'
       - '**/Dockerfile'
@@ -15,6 +17,10 @@ concurrency:
 
 permissions:
   contents: read
+
+env:
+  DOCKER_REGISTRY: docker.io
+  DOCKER_REPOSITORY: lynxsolutions/php
 
 defaults:
   run:
@@ -36,7 +42,7 @@ jobs:
         run: |
           EOF="EOF-$RANDOM-$RANDOM-$RANDOM"
           echo "strategy<<$EOF" >> $GITHUB_OUTPUT
-          echo "$(php ./generate-matrix-strategy.php)" | tee -a $GITHUB_OUTPUT
+          ./generate-matrix-strategy.php | tee -a $GITHUB_OUTPUT
           echo "$EOF" >> $GITHUB_OUTPUT
 
   build-and-push:
@@ -47,7 +53,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Log in (${{ env.DOCKER_REGISTRY }} registry)
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_REGISTRY_USER }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+
       - name: Build ${{ matrix.name }}
         run: ${{ matrix.runs.build }}
+
       - name: List Images
-        run: docker image ls | grep "\/php"
+        run: docker image ls | grep "$DOCKER_REPOSITORY"
