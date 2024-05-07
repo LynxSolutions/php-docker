@@ -9,6 +9,8 @@ const VERSIONS = [
     '8.3',
 ];
 
+const LATEST = '8.3';
+
 // Must be implemented in Dockerfile.template
 const DISTROS = [
     'alpine',
@@ -54,6 +56,7 @@ foreach (VERSIONS as $version) {
 
     $currentVersion = [
         'version' => $latestVersion,
+        'latest' => $version == LATEST,
         'variants' => [],
     ];
 
