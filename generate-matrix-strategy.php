@@ -43,7 +43,7 @@ $strategy = [
     ],
 ];
 
-exit_cli(json_encode($strategy, JSON_PRETTY_PRINT));
+exit_cli(json_encode($strategy, JSON_PRETTY_PRINT), STATUS_SUCCESS);
 
 function getVersionTags(string $version, string $variant, bool $latest = false): array
 {
