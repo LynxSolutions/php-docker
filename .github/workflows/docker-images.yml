@@ -10,7 +10,6 @@ on:
     paths:
       - 'versions.json'
       - '**/Dockerfile'
-      - 'Dockerfile.template'
 
 concurrency:
   group: ${{ github.ref }}
