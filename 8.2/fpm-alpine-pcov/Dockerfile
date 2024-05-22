@@ -20,6 +20,7 @@ RUN apk add --no-cache --virtual .build-deps \
       pcov \
     && docker-php-ext-configure gd --with-freetype --with-jpeg  \
     && docker-php-ext-install \
+      --jobs 4 \
       bcmath \
       gd \
       opcache \
