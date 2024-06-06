@@ -47,15 +47,15 @@ foreach (VERSIONS as $version) {
         exit_cli(sprintf("Could not get latest version for %s\n", $version));
     }
 
-    if (!isset($currentVersions[$version]) || $currentVersions[$version]['version'] !== $latestVersion) {
-        $bumps[] = sprintf('%s to %s', $version, $latestVersion);
-    }
-
     if (!dockerTagExists($latestVersion)) {
         continue;
     }
 
-    $currentVersion = [
+    if (!isset($currentVersions[$version]) || $currentVersions[$version]['version'] !== $latestVersion) {
+        $bumps[] = sprintf('%s to %s', $version, $latestVersion);
+    }
+
+    $versionData = [
         'version' => $latestVersion,
         'latest' => $version == LATEST,
         'variants' => [],
@@ -65,80 +65,91 @@ foreach (VERSIONS as $version) {
         foreach (DISTROS as $distro) {
             $tagSuffix = sprintf('%s-%s', $variant, $distro);
 
-            $currentVersion['variants'][] = $tagSuffix;
+            $versionData['variants'][] = $tagSuffix;
 
             if (!isset(SUBVARIANTS[$variant])) {
                 continue;
             }
 
             foreach (SUBVARIANTS[$variant] as $subvariant) {
-                $currentVersion['variants'][] = sprintf('%s-%s', $tagSuffix, $subvariant);
+                $versionData['variants'][] = sprintf('%s-%s', $tagSuffix, $subvariant);
             }
         }
     }
 
-    $latestVersions[$version] = $currentVersion;
+    $latestVersions[$version] = $versionData;
 }
 
-writeVersionsToFile($latestVersions);
+writeVersionsToFile($currentVersions, $latestVersions);
 
 exit_cli(getGithubActionsOutputParams($bumps), status: STATUS_SUCCESS);
 
 function dockerTagExists(string $tag): bool
 {
-    $context = stream_context_create([
-        'http' => [
-            'ignore_errors' => true,
-        ],
-    ]);
+    $resp = request(sprintf('https://hub.docker.com/v2/repositories/library/php/tags/%s', $tag));
+    $result = true;
 
-    $response = file_get_contents(
-        filename: sprintf('https://hub.docker.com/v2/repositories/library/php/tags/%s', $tag),
-        context: $context,
-    );
-
-    if ($response === false) {
-        return false;
+    if ($resp->getCurlErrno() > 0) {
+        logError("cURL error (%d): %s", $resp->getCurlErrno(), $resp->getCurlError());
+        $result = false;
     }
 
-    $response = json_decode($response, true);
-
-    if ($response['errinfo'] ?? false) {
-        return false;
+    if ($resp->getStatus() >= 400) {
+        logError("HTTP error: %d", $resp->getStatus());
+        $result = false;
     }
 
-    return true;
+    if ($resp->getBody()['errinfo'] ?? false) {
+        logError("Docker Hub error: %s", $resp->getBody()['message']);
+        $result = false;
+    }
+
+    return $result;
 }
 
 function getLatestVersion(string $version): false|string
 {
-    $query = http_build_query([
+    $resp = request('https://www.php.net/releases/index.php', [
         'json' => true,
         'max' => 1,
         'version' => $version,
     ]);
 
-    $response = file_get_contents('https://www.php.net/releases/index.php?' . $query);
-
-    if ($response === false) {
+    if ($resp->getCurlErrno() > 0) {
+        logError("cURL error (%d): %s", $resp->getCurlErrno(), $resp->getCurlError());
         return false;
     }
 
-    $response = json_decode($response, true);
-
-    if (isset($response['error'])) {
+    if ($resp->getStatus() >= 400) {
+        logError("HTTP error: %d", $resp->getStatus());
         return false;
     }
 
-    return array_key_first($response);
+    if (null === $resp->getBody() || isset($resp->getBody()['error'])) {
+        return false;
+    }
+
+    return array_key_first($resp->getBody());
 }
 
-function writeVersionsToFile(array $versions): void
+function writeVersionsToFile(array $currentVersions, array $latestVersions): void
 {
+    $currentVersions = array_merge($currentVersions, $latestVersions);
+
+    $versions = [];
+    foreach (VERSIONS as $version) {
+        if (!isset($currentVersions[$version])) {
+            continue;
+        }
+
+        $versions[$version] = $currentVersions[$version];
+    }
+
     $result = file_put_contents(
         VERSIONS_FILE,
-        json_encode($versions, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
+        json_encode($latestVersions, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
     );
+
     if ($result === false) {
         exit_cli(sprintf("Could not write to %s\n", VERSIONS_FILE));
     }
