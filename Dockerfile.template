@@ -15,9 +15,8 @@ RUN apk add --no-cache --virtual .build-deps \
 {{ if env.subvariant != "" then ( -}}
       {{ env.subvariant }} \
 {{ ) else "" end -}}
-    && docker-php-ext-configure \
-      gd --with-freetype --with-jpeg \
-      intl \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-configure intl \
     && docker-php-ext-install \
       --jobs 4 \
       bcmath \
