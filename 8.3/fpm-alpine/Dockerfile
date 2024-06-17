@@ -15,9 +15,12 @@ RUN apk add --no-cache --virtual .build-deps \
       libjpeg-turbo-dev \
       libpng-dev \
       libzip-dev \
+      icu-dev \
     && pecl install \
       redis \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg  \
+    && docker-php-ext-configure \
+      gd --with-freetype --with-jpeg \
+      intl \
     && docker-php-ext-install \
       --jobs 4 \
       bcmath \
@@ -26,6 +29,7 @@ RUN apk add --no-cache --virtual .build-deps \
       pdo_mysql \
       sockets \
       zip \
+      intl \
     && docker-php-ext-enable \
       redis \
     && apk del .build-deps \
