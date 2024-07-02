@@ -1,5 +1,7 @@
 # [PHP](https://hub.docker.com/r/lynxsolutions/php) base image
-A [PHP](https://php.net) base image for [Laravel](https://laravel.com) projects.
+_A [PHP](https://php.net) base image for [Laravel](https://laravel.com) projects._
+
+Being based on it, this image is a drop-in replacement for the [Official PHP image](https://hub.docker.com/_/php).
 
 ## Extensions
 The main image comes with some commonly used extensions already installed:
