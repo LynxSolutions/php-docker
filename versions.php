@@ -8,9 +8,10 @@ require(__DIR__ . '/common.php');
 const VERSIONS = [
     '8.2',
     '8.3',
+    '8.4',
 ];
 
-const LATEST = '8.3';
+const LATEST = '8.4';
 
 // Must be implemented in Dockerfile.template
 const DISTROS = [
