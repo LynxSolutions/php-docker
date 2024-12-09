@@ -21,6 +21,7 @@ RUN apk add --no-cache --virtual .build-deps \
       xdebug \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
+    && docker-php-ext-configure pcntl \
     && docker-php-ext-install \
       --jobs 4 \
       bcmath \
@@ -30,6 +31,7 @@ RUN apk add --no-cache --virtual .build-deps \
       sockets \
       zip \
       intl \
+      pcntl \
     && docker-php-ext-enable \
       redis \
       xdebug \
