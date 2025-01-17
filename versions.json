@@ -22,5 +22,17 @@
             "cli-alpine-xdebug",
             "cli-alpine-pcov"
         ]
+    },
+    "8.4": {
+        "version": "8.4.3",
+        "latest": true,
+        "variants": [
+            "fpm-alpine",
+            "fpm-alpine-xdebug",
+            "fpm-alpine-pcov",
+            "cli-alpine",
+            "cli-alpine-xdebug",
+            "cli-alpine-pcov"
+        ]
     }
 }
