@@ -4,7 +4,7 @@
 # PLEASE DO NOT EDIT IT DIRECTLY.
 #
 
-FROM php:8.3.16-cli-alpine
+FROM php:8.3.17-cli-alpine
 
 RUN apk add --no-cache --virtual .build-deps \
       $PHPIZE_DEPS \
