@@ -1,6 +1,6 @@
 {
     "8.2": {
-        "version": "8.2.28",
+        "version": "8.2.29",
         "latest": false,
         "variants": [
             "fpm-alpine",
@@ -12,7 +12,7 @@
         ]
     },
     "8.3": {
-        "version": "8.3.22",
+        "version": "8.3.23",
         "latest": false,
         "variants": [
             "fpm-alpine",
@@ -24,7 +24,7 @@
         ]
     },
     "8.4": {
-        "version": "8.4.8",
+        "version": "8.4.10",
         "latest": true,
         "variants": [
             "fpm-alpine",
