@@ -25,6 +25,18 @@
     },
     "8.4": {
         "version": "8.4.17",
+        "latest": false,
+        "variants": [
+            "fpm-alpine",
+            "fpm-alpine-xdebug",
+            "fpm-alpine-pcov",
+            "cli-alpine",
+            "cli-alpine-xdebug",
+            "cli-alpine-pcov"
+        ]
+    },
+    "8.5": {
+        "version": "8.5.2",
         "latest": true,
         "variants": [
             "fpm-alpine",
