@@ -9,9 +9,10 @@ const VERSIONS = [
     '8.2',
     '8.3',
     '8.4',
+    '8.5',
 ];
 
-const LATEST = '8.4';
+const LATEST = '8.5';
 
 // Must be implemented in Dockerfile.template
 const DISTROS = [

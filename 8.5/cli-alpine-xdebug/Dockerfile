@@ -1,4 +1,10 @@
-FROM {{ env.from }}
+#
+# NOTE: THIS DOCKERFILE IS GENERATED VIA "apply-templates.sh"
+#
+# PLEASE DO NOT EDIT IT DIRECTLY.
+#
+
+FROM php:8.5.2-cli-alpine
 
 RUN apk add --no-cache --virtual .build-deps \
       $PHPIZE_DEPS \
@@ -12,9 +18,7 @@ RUN apk add --no-cache --virtual .build-deps \
       icu-dev \
     && pecl install \
       redis \
-{{ if env.subvariant != "" then ( -}}
-      {{ env.subvariant }} \
-{{ ) else "" end -}}
+      xdebug \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-configure intl \
     && docker-php-ext-configure pcntl \
@@ -22,9 +26,6 @@ RUN apk add --no-cache --virtual .build-deps \
       --jobs 4 \
       bcmath \
       gd \
-{{ if env.version != "8.5" then ( -}}
-      opcache \
-{{ ) else "" end -}}
       pdo_mysql \
       sockets \
       zip \
@@ -32,9 +33,7 @@ RUN apk add --no-cache --virtual .build-deps \
       pcntl \
     && docker-php-ext-enable \
       redis \
-{{ if env.subvariant != "" then ( -}}
-      {{ env.subvariant }} \
-{{ ) else "" end -}}
+      xdebug \
     && apk del .build-deps \
     && docker-php-source delete \
     && pecl clear-cache
