@@ -21,9 +21,9 @@ The `-xdebug` and `-pcov` suffixed images also come with [Xdebug](https://xdebug
 expose_php = Off
 ```
 
-# Adding support for a new version
+## Adding support for a new version
 
-### 1. Update the `VERSIONS` and `LATEST` constants in `versions.php` with the newer version.
+#### 1. Update the `VERSIONS` and `LATEST` constants in `versions.php` with the newer version.
 ```diff
 const VERSIONS = [
     '8.2',
@@ -36,17 +36,17 @@ const VERSIONS = [
 + const LATEST = '8.5';
 ```
 
-### 2. Run `php versions.php` to generate the new `versions.json`
+#### 2. Run `php versions.php` to generate the new `versions.json`
 ```shell
 php versions.php
 ```
 
-### 3. Run `apply-templates.sh` to generate the Dockerfiles
+#### 3. Run `apply-templates.sh` to generate the Dockerfiles
 ```shell
 ./apply-tempaltes.sh
 ```
 
-### 4. Build and test the newly generated Dockerfiles
+#### 4. Build and test the newly generated Dockerfiles
 Example:
 ```shell
 docker buildx build -t php:8.5-fpm-alpine-xdebug-test ./8.5/fpm-alpine-xdebug
