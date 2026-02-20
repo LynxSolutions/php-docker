@@ -9,6 +9,10 @@
             "cli-alpine",
             "cli-alpine-xdebug",
             "cli-alpine-pcov"
+        ],
+        "platforms": [
+            "linux/amd64",
+            "linux/arm64"
         ]
     },
     "8.3": {
@@ -21,6 +25,10 @@
             "cli-alpine",
             "cli-alpine-xdebug",
             "cli-alpine-pcov"
+        ],
+        "platforms": [
+            "linux/amd64",
+            "linux/arm64"
         ]
     },
     "8.4": {
@@ -33,6 +41,10 @@
             "cli-alpine",
             "cli-alpine-xdebug",
             "cli-alpine-pcov"
+        ],
+        "platforms": [
+            "linux/amd64",
+            "linux/arm64"
         ]
     },
     "8.5": {
@@ -45,6 +57,10 @@
             "cli-alpine",
             "cli-alpine-xdebug",
             "cli-alpine-pcov"
+        ],
+        "platforms": [
+            "linux/amd64",
+            "linux/arm64"
         ]
     }
 }

@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-require(__DIR__ . '/common.php');
+require_once __DIR__ . '/common.php';
 
 if (!file_exists(VERSIONS_FILE)) {
     exit_cli(sprintf("%s file does not exist", VERSIONS_FILE));
@@ -19,6 +19,7 @@ $include = [];
 foreach ($versions as $majorVersion => $versionData) {
     $version = $versionData['version'];
     $isLatest = $versionData['latest'];
+    $platforms = implode(',', $versionData['platforms']);
 
     foreach ($versionData['variants'] as $variant) {
         $tags = getVersionTags($repository, $version, $variant, $isLatest);
@@ -28,8 +29,7 @@ foreach ($versions as $majorVersion => $versionData) {
             'os' => 'ubuntu-latest',
             'tags' => $tags,
             'runs' => [
-                'build' => getBuildCommand($tags, $dir, latest: $isLatest),
-                'push' => getPushCommand($tags),
+                'build-and-push' => getBuildAndPushCommand($tags, $dir, platforms: $platforms, latest: $isLatest),
             ],
         ];
     }
@@ -66,22 +66,17 @@ function getVersionTags(string $repository, string $version, string $variant, bo
     return $tags;
 }
 
-function getBuildCommand(array $tags, string $dir, string $platform = 'linux/amd64', bool $latest = false): string
+function getBuildAndPushCommand(array $tags, string $dir, string $platforms = 'linux/amd64', bool $latest = false): string
 {
-    $tagArgs = implode(' ', array_map(fn($tag) => '--tag ' . $tag, $tags));
+    $tagArgs = implode(' ', array_map(static fn(string $tag) => '--tag ' . $tag, $tags));
 
     $cacheTags = $tags;
     array_shift($cacheTags);
     if ($latest) {
         array_pop($cacheTags);
     }
-    $cacheFromArgs = implode(' ', array_map(fn($tag) => '--cache-from ' . $tag, $cacheTags));
+    $cacheFromArgs = implode(' ', array_map(static fn(string $tag) => '--cache-from ' . $tag, $cacheTags));
 
 
-    return sprintf('docker build --platform %s %s %s %s', $platform, $cacheFromArgs, $tagArgs, $dir);
-}
-
-function getPushCommand(array $tags): string
-{
-    return implode(' && ', array_map(fn($tag) => sprintf('docker push %s', $tag), $tags));
+    return sprintf('docker buildx build --push --platform %s %s %s %s', $platforms, $cacheFromArgs, $tagArgs, $dir);
 }

@@ -54,18 +54,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Log in (${{ env.DOCKER_REGISTRY }} registry)
+      - name: Logging in (${{ env.DOCKER_REGISTRY }} registry)
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ secrets.DOCKER_REGISTRY_USER }}
           password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
 
-      - name: Build ${{ matrix.name }}
-        run: ${{ matrix.runs.build }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
-      - name: List Images
-        run: docker image ls | grep "$DOCKER_REPOSITORY"
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Push ${{ join(matrix.tags, ', ') }}
-        run: ${{ matrix.runs.push }}
+      - name: Build and Push ${{ matrix.name }}
+        run: ${{ matrix.runs.build-and-push }}
