@@ -3,7 +3,7 @@
 
 declare(strict_types=1);
 
-require(__DIR__ . '/common.php');
+require_once __DIR__ . '/common.php';
 
 const VERSIONS = [
     '8.2',
@@ -12,9 +12,10 @@ const VERSIONS = [
     '8.5',
 ];
 
+// Will be tagged also as, for example, `php:fpm-alpine` or `php:cli-alpine`
 const LATEST = '8.5';
 
-// Must be implemented in Dockerfile.template
+// Must have a corresponding Dockerfile.<distro>
 const DISTROS = [
     'alpine',
 ];
@@ -24,15 +25,24 @@ const VARIANTS = [
     'cli',
 ];
 
-// Must be implemented in Dockerfile.template
+const PLATFORMS = [
+    'linux/amd64',
+    'linux/arm64',
+];
+
+// Must be implemented in Dockerfile.<distro>
 const SUBVARIANTS = [
     'fpm' => [
-        'xdebug',
-        'pcov',
+        'alpine' => [
+            'xdebug',
+            'pcov',
+        ],
     ],
     'cli' => [
-        'xdebug',
-        'pcov',
+        'alpine' => [
+            'xdebug',
+            'pcov',
+        ],
     ],
 ];
 
@@ -61,6 +71,7 @@ foreach (VERSIONS as $version) {
         'version' => $latestVersion,
         'latest' => $version == LATEST,
         'variants' => [],
+        'platforms' => PLATFORMS,
     ];
 
     foreach (VARIANTS as $variant) {
@@ -69,11 +80,11 @@ foreach (VERSIONS as $version) {
 
             $versionData['variants'][] = $tagSuffix;
 
-            if (!isset(SUBVARIANTS[$variant])) {
+            if (!isset(SUBVARIANTS[$variant][$distro])) {
                 continue;
             }
 
-            foreach (SUBVARIANTS[$variant] as $subvariant) {
+            foreach (SUBVARIANTS[$variant][$distro] as $subvariant) {
                 $versionData['variants'][] = sprintf('%s-%s', $tagSuffix, $subvariant);
             }
         }

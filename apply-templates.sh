@@ -42,15 +42,25 @@ for version; do
 
     for dir in "${variants[@]}"; do
         if [[ $dir == *-*-* ]]; then
-            variant="${dir%-*}"
+            variant="${dir%%-*}"
+            distro="${dir#*-}"
+            distro="${distro%-*}"
             subvariant="${dir##*-}"
         else
-            variant="$dir"
+            variant="${dir%%-*}"
+            distro="${dir#*-}"
+            distro="${distro%-*}"
             subvariant=""
         fi
-        export variant subvariant
 
+        export variant subvariant distro
+
+        if [[ "${distro}" == "ubuntu" ]]; then
         from="php:${latest_version}-${variant}"
+        else
+            from="php:${latest_version}-${variant}-${distro}"
+        fi
+
         export from
 
         mkdir -p "$version/$dir"
@@ -60,7 +70,7 @@ for version; do
 
         {
             generated_warning
-            gawk -f "$jqt" 'Dockerfile.template'
+            gawk -f "$jqt" "Dockerfile.${distro}"
         } > "$version/$dir/Dockerfile"
     done
 
