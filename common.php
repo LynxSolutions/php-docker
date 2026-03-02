@@ -36,22 +36,23 @@ function request(string $url, array $query = []): Response
 
     curl_close($curl);
 
-    $body = null;
-    if (!empty($data) && json_validate($data)) {
-        $body = json_decode($data, true);
-    }
-
-    return new Response($errno, $error, $status, $body);
+    return new Response($errno, $error, $status, $data ?: "");
 }
 
 class Response
 {
+    private ?array $body = null;
+
     public function __construct(
         private readonly int    $curlErrno,
         private readonly string $curlError,
         private readonly int    $status,
-        private readonly ?array  $body = null,
-    ) {}
+        private readonly string $rawBody,
+    ) {
+        if (!empty($rawBody) && json_validate($rawBody)) {
+            $this->body = json_decode($rawBody, true);
+        }
+    }
 
     public function getCurlErrno(): int
     {
@@ -66,6 +67,11 @@ class Response
     public function getStatus(): int
     {
         return $this->status;
+    }
+
+    public function getRawBody(): string
+    {
+        return $this->rawBody;
     }
 
     public function getBody(): ?array

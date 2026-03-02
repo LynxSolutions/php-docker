@@ -134,7 +134,7 @@ function getLatestVersion(string $version): false|string
     }
 
     if ($resp->getStatus() >= 400) {
-        logError("HTTP error: %d", $resp->getStatus());
+        logError("HTTP error: %d, body: %s", $resp->getStatus(), $resp->getRawBody());
         return false;
     }
 
