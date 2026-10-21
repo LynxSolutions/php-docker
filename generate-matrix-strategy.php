@@ -36,7 +36,8 @@ foreach ($versions as $majorVersion => $versionData) {
 }
 
 $strategy = [
-    'fail-fast' => true,
+    'fail-fast' => false,
+    'max-parallel' => 6,
     'matrix' => [
         'include' => $include,
     ],

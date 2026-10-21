@@ -66,6 +66,12 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
+        with:
+          # Pull Docker Hub images through Google's mirror first; Docker Hub
+          # rate-limited every job (429) during the 2026-10-21 security release.
+          buildkitd-config-inline: |
+            [registry."docker.io"]
+              mirrors = ["mirror.gcr.io"]
 
       - name: Build and Push ${{ matrix.name }}
         run: ${{ matrix.runs.build-and-push }}
