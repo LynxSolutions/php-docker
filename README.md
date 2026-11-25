@@ -19,6 +19,7 @@ The `-xdebug` and `-pcov` suffixed images also come with [Xdebug](https://xdebug
 ## Ini [overrides](conf.d/php.overrides.ini)
 ```ini
 expose_php = Off
+session.upload_progress.enabled = Off
 ```
 
 ## Adding support for a new version
